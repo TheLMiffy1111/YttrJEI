@@ -1,15 +1,14 @@
 package thelm.yttrjei.recipe.category;
 
-import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.crafting.CentrifugingRecipe;
-
+import diy.y2k.yttr.Yttr;
+import diy.y2k.yttr.content.recipe.CentrifugingRecipe;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import thelm.jeidrawables.gui.render.ResourceDrawable;
 import thelm.yttrjei.YttrJEI;
 
@@ -20,7 +19,9 @@ public class CentrifugingRecipeCategory extends AbstractRecipeCategory<Centrifug
 
 	public static final Text TITLE = Text.translatable("emi.category.yttr.centrifuging");
 
-	public static final ResourceDrawable CENTRIFUGE = new ResourceDrawable(Yttr.id("textures/gui/centrifuge.png"), 41, 8, 94, 95);
+	public static final Identifier BACKGROUND = Yttr.id("textures/gui/centrifuge.png");
+	public static final ResourceDrawable CENTRIFUGE_X = new ResourceDrawable(BACKGROUND, 79, 12, 56, 84);
+	public static final ResourceDrawable CENTRIFUGE_Y = new ResourceDrawable(BACKGROUND, 41, 24, 56, 83);
 
 	public CentrifugingRecipeCategory() {
 		super(YttrJEI.CENTRIFUGING, TITLE);
@@ -46,8 +47,9 @@ public class CentrifugingRecipeCategory extends AbstractRecipeCategory<Centrifug
 	}
 
 	@Override
-	public void draw(CentrifugingRecipe recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
-		CENTRIFUGE.draw(poseStack);
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, CentrifugingRecipe recipe, IFocusGroup focuses) {
+		builder.addDrawable(CENTRIFUGE_X, 38, 0);
+		builder.addDrawable(CENTRIFUGE_Y, 0, 12);
 	}
 
 	public ItemStack getOutput(CentrifugingRecipe recipe, int index) {

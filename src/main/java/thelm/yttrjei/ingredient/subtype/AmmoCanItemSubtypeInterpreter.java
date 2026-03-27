@@ -1,7 +1,8 @@
 package thelm.yttrjei.ingredient.subtype;
 
-import com.unascribed.yttr.content.item.AmmoCanItem;
+import java.util.Locale;
 
+import diy.y2k.yttr.init.technical.YOpponents;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import net.minecraft.item.ItemStack;
@@ -10,8 +11,8 @@ public class AmmoCanItemSubtypeInterpreter implements IIngredientSubtypeInterpre
 
 	@Override
 	public String apply(ItemStack ingredient, UidContext context) {
-		if(ingredient.getItem() instanceof AmmoCanItem) {
-			return ingredient.getNbt().getString("Mode");
+		if(YOpponents.MODE.present(ingredient)) {
+			return YOpponents.MODE.get(ingredient).name().toLowerCase(Locale.ROOT);
 		}
 		return NONE;
 	}

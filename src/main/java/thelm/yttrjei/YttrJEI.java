@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,32 +15,33 @@ import com.google.common.collect.Streams;
 import com.unascribed.lib39.machination.Lib39Machination;
 import com.unascribed.lib39.machination.recipe.PistonSmashingRecipe;
 import com.unascribed.lib39.machination.recipe.SoakingRecipe;
-import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.client.YttrClientInit;
-import com.unascribed.yttr.client.resource.RuinedRecipeResourceMetadata;
-import com.unascribed.yttr.client.screen.handled.CanFillerScreen;
-import com.unascribed.yttr.client.screen.handled.CentrifugeScreen;
-import com.unascribed.yttr.client.screen.handled.ProjectTableScreen;
-import com.unascribed.yttr.client.screen.handled.RafterScreen;
-import com.unascribed.yttr.content.item.DropOfContinuityItem;
-import com.unascribed.yttr.crafting.CentrifugingRecipe;
-import com.unascribed.yttr.crafting.LampRecipe;
-import com.unascribed.yttr.crafting.VoidFilteringRecipe;
-import com.unascribed.yttr.init.YHandledScreens;
-import com.unascribed.yttr.init.content.YEnchantments;
-import com.unascribed.yttr.init.content.YItems;
-import com.unascribed.yttr.init.technical.YRecipeTypes;
-import com.unascribed.yttr.inventory.CanFillerScreenHandler;
-import com.unascribed.yttr.inventory.CentrifugeScreenHandler;
-import com.unascribed.yttr.inventory.ProjectTableScreenHandler;
-import com.unascribed.yttr.mechanics.rifle.RifleMode;
 
+import diy.y2k.yttr.Yttr;
+import diy.y2k.yttr.client.YttrClientInit;
+import diy.y2k.yttr.client.resource.RuinedRecipeResourceMetadata;
+import diy.y2k.yttr.client.screen.handled.CanFillerScreen;
+import diy.y2k.yttr.client.screen.handled.CentrifugeScreen;
+import diy.y2k.yttr.client.screen.handled.ProjectTableScreen;
+import diy.y2k.yttr.client.screen.handled.RafterScreen;
+import diy.y2k.yttr.content.recipe.CentrifugingRecipe;
+import diy.y2k.yttr.content.recipe.LampRecipe;
+import diy.y2k.yttr.content.recipe.PinchingRecipe;
+import diy.y2k.yttr.content.recipe.VoidFilteringRecipe;
+import diy.y2k.yttr.init.YHandledScreens;
+import diy.y2k.yttr.init.content.YEnchantments;
+import diy.y2k.yttr.init.content.YItems;
+import diy.y2k.yttr.init.technical.YRecipeTypes;
+import diy.y2k.yttr.inventory.CanFillerScreenHandler;
+import diy.y2k.yttr.inventory.CentrifugeScreenHandler;
+import diy.y2k.yttr.inventory.ProjectTableScreenHandler;
+import diy.y2k.yttr.mechanics.rifle.RifleMode;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
+import mezz.jei.api.registration.IIngredientAliasRegistration;
 import mezz.jei.api.registration.IModIngredientRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -51,18 +51,19 @@ import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceFinder;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import thelm.yttrjei.alias.YttrAliasMapping;
 import thelm.yttrjei.gui.render.FakeModelIngredientRenderer;
 import thelm.yttrjei.ingredient.FakeModelIngredient;
 import thelm.yttrjei.ingredient.FakeModelIngredientHelper;
@@ -70,16 +71,21 @@ import thelm.yttrjei.ingredient.subtype.AmmoCanItemSubtypeInterpreter;
 import thelm.yttrjei.ingredient.subtype.LampItemSubtypeInterpreter;
 import thelm.yttrjei.ingredient.subtype.PotionItemSubtypeInterpreter;
 import thelm.yttrjei.ingredient.subtype.SnareItemSubtypeInterpreter;
+import thelm.yttrjei.metadata.SketchRecipeMetadataSection;
+import thelm.yttrjei.metadata.SketchRecipeMetadataSectionSerializer;
 import thelm.yttrjei.recipe.ContinuityGiftRecipe;
 import thelm.yttrjei.recipe.FillingRecipe;
 import thelm.yttrjei.recipe.ForgottenCraftingRecipe;
 import thelm.yttrjei.recipe.ShatteringRecipeWrapper;
+import thelm.yttrjei.recipe.SketchRecipe;
 import thelm.yttrjei.recipe.category.CentrifugingRecipeCategory;
 import thelm.yttrjei.recipe.category.ContinuityGiftRecipeCategory;
 import thelm.yttrjei.recipe.category.FillingRecipeCategory;
 import thelm.yttrjei.recipe.category.ForgottenCraftingRecipeCategory;
+import thelm.yttrjei.recipe.category.PinchingRecipeCategory;
 import thelm.yttrjei.recipe.category.PistonSmashingRecipeCategory;
 import thelm.yttrjei.recipe.category.ShatteringRecipeCategory;
+import thelm.yttrjei.recipe.category.SketchRecipeCategory;
 import thelm.yttrjei.recipe.category.SoakingRecipeCategory;
 import thelm.yttrjei.recipe.category.VoidFilteringRecipeCategory;
 import thelm.yttrjei.recipe.replacer.LampRecipeMaker;
@@ -99,10 +105,12 @@ public class YttrJEI implements IModPlugin {
 	public static final RecipeType<CentrifugingRecipe> CENTRIFUGING = createRecipeType(Yttr.id("centrifuging"), CentrifugingRecipe.class);
 	public static final RecipeType<VoidFilteringRecipe> VOID_FILTERING = createRecipeType(Yttr.id("void_filtering"), VoidFilteringRecipe.class);
 	public static final RecipeType<ShatteringRecipeWrapper> SHATTERING = createRecipeType(Yttr.id("shattering"), ShatteringRecipeWrapper.class);
+	public static final RecipeType<PinchingRecipe> PINCHING = createRecipeType(Yttr.id("pinching"), PinchingRecipe.class);
 
 	public static final RecipeType<FillingRecipe> FILLING = createRecipeType(Yttr.id("filling"), FillingRecipe.class);
 	public static final RecipeType<ContinuityGiftRecipe> CONTINUITY_GIFTS = createRecipeType(Yttr.id("continuity_gifts"), ContinuityGiftRecipe.class);
 	public static final RecipeType<ForgottenCraftingRecipe> FORGOTTEN_CRAFTING = createRecipeType(Yttr.id("forgotten_crafting"), ForgottenCraftingRecipe.class);
+	public static final RecipeType<SketchRecipe> SKETCHES = createRecipeType(Yttr.id("sketches"), SketchRecipe.class);
 
 	@Override
 	public Identifier getPluginUid() {
@@ -146,6 +154,15 @@ public class YttrJEI implements IModPlugin {
 	}
 
 	@Override
+	public void registerIngredientAliases(IIngredientAliasRegistration registration) {
+		if(checkDisabled()) {
+			return;
+		}
+
+		YttrAliasMapping.addAliases(registration);
+	}
+
+	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		jeiHelpers = registration.getJeiHelpers();
 
@@ -158,10 +175,12 @@ public class YttrJEI implements IModPlugin {
 		registration.addRecipeCategories(new SoakingRecipeCategory());
 		registration.addRecipeCategories(new VoidFilteringRecipeCategory());
 		registration.addRecipeCategories(new ShatteringRecipeCategory());
+		registration.addRecipeCategories(new PinchingRecipeCategory());
 
 		registration.addRecipeCategories(new FillingRecipeCategory());
 		registration.addRecipeCategories(new ContinuityGiftRecipeCategory());
 		registration.addRecipeCategories(new ForgottenCraftingRecipeCategory());
+		registration.addRecipeCategories(new SketchRecipeCategory());
 	}
 
 	@Override
@@ -171,6 +190,7 @@ public class YttrJEI implements IModPlugin {
 		}
 
 		RecipeManager recipeManager = MinecraftClient.getInstance().world.getRecipeManager();
+		DynamicRegistryManager registryAccess = MinecraftClient.getInstance().world.getRegistryManager();
 		ResourceManager resourceManager = MinecraftClient.getInstance().getResourceManager();
 
 		registration.addRecipes(PISTON_SMASHING, recipeManager.listAllOfType(Lib39Machination.RecipeTypes.PISTON_SMASHING));
@@ -191,8 +211,8 @@ public class YttrJEI implements IModPlugin {
 				recipeManager.listAllOfType(net.minecraft.recipe.RecipeType.STONECUTTING).
 				stream().
 				filter(r -> {
-					return r.getOutput().getCount() == 1 &&
-							r.getOutput().getItem() instanceof BlockItem &&
+					return r.getOutput(registryAccess).getCount() == 1 &&
+							r.getOutput(registryAccess).getItem() instanceof BlockItem &&
 							!r.getIngredients().isEmpty();
 				}).
 				map(ShatteringRecipeWrapper::new),
@@ -207,37 +227,41 @@ public class YttrJEI implements IModPlugin {
 				map(ShatteringRecipeWrapper::new)).
 				toList();
 		registration.addRecipes(SHATTERING, shatteringRecipes);
+		registration.addRecipes(PINCHING, recipeManager.listAllOfType(YRecipeTypes.PINCHING));
 
 		registration.addRecipes(FILLING, RifleMode.VALUES.stream().map(FillingRecipe::new).toList());
-		double giftChance = 100D / DropOfContinuityItem.getPossibilities(true, null).size();
-		List<ContinuityGiftRecipe> giftRecipes = DropOfContinuityItem.getPossibilities(true, null).
-				stream().
-				sorted(Comparator.comparingInt(Registry.ITEM::getRawId)).
-				map(item -> new ContinuityGiftRecipe(item, giftChance)).
-				toList();
-		registration.addRecipes(CONTINUITY_GIFTS, giftRecipes);
+		registration.addRecipes(CONTINUITY_GIFTS, List.of(new ContinuityGiftRecipe()));
 		List<ForgottenCraftingRecipe> forgottenRecipes = new ArrayList<>();
-		for(Map.Entry<Identifier, Resource> entry : resourceManager.findResources("textures/gui/ruined_recipe", id -> id.getPath().endsWith(".png")).entrySet()) {
-			Identifier id = entry.getKey();
-			Identifier itemId = new Identifier(id.getNamespace(), id.getPath().substring(27, id.getPath().length() - 4));
-			if((!itemId.getNamespace().equals("yttr") ||
-					!itemId.getPath().equals("border") &&
-					!itemId.getPath().equals("overlay")) &&
-					Registry.ITEM.containsId(itemId)) {
+		ResourceFinder forgottenFormat = new ResourceFinder("textures/gui/ruined_recipe", ".png");
+		for(Map.Entry<Identifier, Resource> entry : forgottenFormat.findResources(resourceManager).entrySet()) {
+			Identifier id = forgottenFormat.toResourceId(entry.getKey());
+			if((!id.getNamespace().equals("yttr") ||
+					!id.getPath().equals("border") &&
+					!id.getPath().equals("overlay")) &&
+					Registries.ITEM.containsId(id)) {
 				Optional<RuinedRecipeResourceMetadata> meta = Optional.empty();
 				try {
 					meta = entry.getValue().getMetadata().decode(RuinedRecipeResourceMetadata.READER);
 				}
 				catch(IOException e) {}
-				forgottenRecipes.add(new ForgottenCraftingRecipe(itemId, meta));
+				forgottenRecipes.add(new ForgottenCraftingRecipe(id, meta));
 			}
 		}
 		registration.addRecipes(FORGOTTEN_CRAFTING, forgottenRecipes);
+		List<SketchRecipe> sketchRecipes = new ArrayList<>();
+		ResourceFinder sketchFormat = new ResourceFinder("textures/gui/sketch_recipe", ".png");
+		for(Map.Entry<Identifier, Resource> entry : sketchFormat.findResources(resourceManager).entrySet()) {
+			Identifier id = forgottenFormat.toResourceId(entry.getKey());
+			Optional<SketchRecipeMetadataSection> meta = Optional.empty();
+			try {
+				meta = entry.getValue().getMetadata().decode(SketchRecipeMetadataSectionSerializer.INSTANCE);
+			}
+			catch(Exception e) {}
+			sketchRecipes.add(new SketchRecipe(id, meta));
+		}
+		registration.addRecipes(SKETCHES, sketchRecipes);
 
 		registration.addRecipes(RecipeTypes.CRAFTING, LampRecipeMaker.createRecipes());
-
-		registration.addItemStackInfo(new ItemStack(YItems.DRY_ICE), buildInfo("dry_ice"));
-		registration.addItemStackInfo(new ItemStack(YItems.GLITCHWEP), buildInfo("glitchwep"));
 	}
 
 	@Override
@@ -260,17 +284,18 @@ public class YttrJEI implements IModPlugin {
 			return;
 		}
 
-		registration.addRecipeCatalyst(new ItemStack(Items.PISTON), PISTON_SMASHING);
-		registration.addRecipeCatalyst(new ItemStack(Items.STICKY_PISTON), PISTON_SMASHING);
-		registration.addRecipeCatalyst(new ItemStack(YItems.CENTRIFUGE), CENTRIFUGING);
-		registration.addRecipeCatalyst(new ItemStack(YItems.VOID_FILTER), VOID_FILTERING);
+		registration.addRecipeCatalyst(Items.PISTON, PISTON_SMASHING);
+		registration.addRecipeCatalyst(Items.STICKY_PISTON, PISTON_SMASHING);
+		registration.addRecipeCatalyst(YItems.CENTRIFUGE, CENTRIFUGING);
+		registration.addRecipeCatalyst(YItems.VOID_FILTER, VOID_FILTERING);
 		registration.addRecipeCatalyst(EnchantedBookItem.forEnchantment(new EnchantmentLevelEntry(YEnchantments.SHATTERING_CURSE, 1)), SHATTERING);
+		registration.addRecipeCatalyst(YItems.PINCH_POINT, PINCHING);
 
-		registration.addRecipeCatalyst(new ItemStack(YItems.CAN_FILLER), FILLING);
-		registration.addRecipeCatalyst(new ItemStack(YItems.DROP_OF_CONTINUITY), CONTINUITY_GIFTS);
+		registration.addRecipeCatalyst(YItems.CAN_FILLER, FILLING);
+		registration.addRecipeCatalyst(YItems.DROP_OF_CONTINUITY, CONTINUITY_GIFTS);
 
-		registration.addRecipeCatalyst(new ItemStack(YItems.PROJECT_TABLE), RecipeTypes.CRAFTING);
-		registration.addRecipeCatalyst(new ItemStack(YItems.CENTRIFUGE), RecipeTypes.FUELING);
+		registration.addRecipeCatalyst(YItems.PROJECT_TABLE, RecipeTypes.CRAFTING);
+		registration.addRecipeCatalyst(YItems.CENTRIFUGE, RecipeTypes.FUELING);
 	}
 
 	@Override
@@ -279,14 +304,14 @@ public class YttrJEI implements IModPlugin {
 			return;
 		}
 
-		registration.addRecipeClickArea(CentrifugeScreen.class, 67, 20, 12, 45, CENTRIFUGING, RecipeTypes.FUELING);
-		registration.addRecipeClickArea(CentrifugeScreen.class, 79, 34, 45, 13, CENTRIFUGING, RecipeTypes.FUELING);
-		registration.addRecipeClickArea(CentrifugeScreen.class, 97, 47, 12, 45, CENTRIFUGING, RecipeTypes.FUELING);
-		registration.addRecipeClickArea(CentrifugeScreen.class, 52, 65, 45, 12, CENTRIFUGING, RecipeTypes.FUELING);
+		registration.addRecipeClickArea(CentrifugeScreen.class, 67, 24, 12, 45, CENTRIFUGING, RecipeTypes.FUELING);
+		registration.addRecipeClickArea(CentrifugeScreen.class, 79, 38, 45, 13, CENTRIFUGING, RecipeTypes.FUELING);
+		registration.addRecipeClickArea(CentrifugeScreen.class, 97, 51, 12, 45, CENTRIFUGING, RecipeTypes.FUELING);
+		registration.addRecipeClickArea(CentrifugeScreen.class, 52, 69, 45, 12, CENTRIFUGING, RecipeTypes.FUELING);
 
-		registration.addRecipeClickArea(CanFillerScreen.class, 80, 57, 16, 21, FILLING);
+		registration.addRecipeClickArea(CanFillerScreen.class, 82, 26, 21, 16, FILLING);
 
-		registration.addRecipeClickArea(ProjectTableScreen.class, 90, 35, 22, 16, RecipeTypes.CRAFTING);
+		registration.addRecipeClickArea(ProjectTableScreen.class, 90, 30, 22, 16, RecipeTypes.CRAFTING);
 		registration.addRecipeClickArea(RafterScreen.class, 115, 73, 22, 16, RecipeTypes.CRAFTING);
 	}
 
@@ -313,13 +338,6 @@ public class YttrJEI implements IModPlugin {
 	public static <R> RecipeType<R> createRecipeType(Identifier uid, Class<? extends R> recipeClass) {
 		RecipeType<R> recipeType = new RecipeType<>(uid, recipeClass);
 		return recipeType;
-	}
-
-	public Text[] buildInfo(String key) {
-		String infoKey = "yttr.info." + key;
-		return IntStream.iterate(1, i -> I18n.hasTranslation(infoKey + "." + i), i -> i + 1).
-				mapToObj(i -> Text.translatable(infoKey + "." + i)).
-				toArray(Text[]::new);
 	}
 
 	public boolean checkDisabled() {

@@ -1,8 +1,7 @@
 package thelm.yttrjei.ingredient.subtype;
 
-import com.unascribed.yttr.content.item.block.LampBlockItem;
-import com.unascribed.yttr.mechanics.LampColor;
-
+import diy.y2k.yttr.init.technical.YOpponents;
+import diy.y2k.yttr.mechanics.LampColor;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import net.minecraft.item.ItemStack;
@@ -11,8 +10,8 @@ public class LampItemSubtypeInterpreter implements IIngredientSubtypeInterpreter
 
 	@Override
 	public String apply(ItemStack ingredient, UidContext context) {
-		LampColor color = LampBlockItem.getColor(ingredient);
-		boolean inverted = LampBlockItem.isInverted(ingredient);
+		LampColor color = YOpponents.LAMP_COLOR.get(ingredient);
+		boolean inverted = YOpponents.INVERTED.get(ingredient);
 		return color + "|" + inverted;
 	}
 }

@@ -1,6 +1,6 @@
 package thelm.yttrjei.recipe;
 
-import com.unascribed.yttr.mechanics.rifle.RifleMode;
+import diy.y2k.yttr.mechanics.rifle.RifleMode;
 
 public record FillingRecipe(RifleMode mode) {
 }

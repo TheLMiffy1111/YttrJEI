@@ -2,15 +2,13 @@ package thelm.yttrjei.recipe.category;
 
 import java.util.Map;
 
-import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.init.content.YEnchantments;
-
+import diy.y2k.yttr.Yttr;
+import diy.y2k.yttr.init.content.YEnchantments;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -63,12 +61,12 @@ public class ShatteringRecipeCategory extends AbstractRecipeCategory<ShatteringR
 	}
 
 	@Override
-	public void draw(ShatteringRecipeWrapper recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, ShatteringRecipeWrapper recipe, IFocusGroup focuses) {
 		if(recipe.exclusive()) {
-			SHATTERING.draw(poseStack, 26, 5);
+			builder.addDrawable(SHATTERING, 26, 5);
 		}
 		else {
-			JEIDrawables.RECIPE_ARROW.draw(poseStack, 27, 5);
+			builder.addDrawable(JEIDrawables.RECIPE_ARROW, 27, 5);
 		}
 	}
 

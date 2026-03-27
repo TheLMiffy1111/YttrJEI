@@ -17,6 +17,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Text;
 import thelm.jeidrawables.gui.render.BlankDrawable;
 import thelm.yttrjei.YttrJEI;
@@ -55,6 +56,10 @@ public abstract class AbstractRecipeCategory<R> implements IRecipeCategory<R> {
 	@Override
 	public IDrawable getIcon() {
 		return null;
+	}
+
+	public DynamicRegistryManager registryAccess() {
+		return MinecraftClient.getInstance().world.getRegistryManager();
 	}
 
 	public TextRenderer font() {

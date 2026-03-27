@@ -6,12 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.unascribed.yttr.content.item.block.LampBlockItem;
-import com.unascribed.yttr.crafting.LampRecipe;
-import com.unascribed.yttr.init.content.YItems;
-import com.unascribed.yttr.mechanics.LampColor;
-import com.unascribed.yttr.util.Resolvable;
-
+import diy.y2k.yttr.content.item.block.LampBlockItem;
+import diy.y2k.yttr.content.recipe.LampRecipe;
+import diy.y2k.yttr.init.content.YItems;
+import diy.y2k.yttr.init.technical.YOpponents;
+import diy.y2k.yttr.mechanics.LampColor;
+import diy.y2k.yttr.util.Resolvable;
 import it.unimi.dsi.fastutil.booleans.BooleanList;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.DyeItem;
@@ -22,15 +22,19 @@ import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.ShapedRecipe;
+import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 
 public class LampRecipeMaker {
 
 	// I don't think this covers all cases but this works good enough
 	public static List<CraftingRecipe> createRecipes() {
 		ItemStack torch = new ItemStack(Items.REDSTONE_TORCH);
+		DynamicRegistryManager registries = MinecraftClient.getInstance().world.getRegistryManager();
 		List<LampRecipe> lRecs = MinecraftClient.getInstance().world.getRecipeManager().
 				listAllOfType(RecipeType.CRAFTING).stream().
 				filter(LampRecipe.class::isInstance).
@@ -39,7 +43,7 @@ public class LampRecipeMaker {
 				toList();
 		List<CraftingRecipe> recs = new ArrayList<>();
 		for(LampRecipe lRec : lRecs) {
-			ItemStack res = lRec.getOutput();
+			ItemStack res = lRec.getOutput(registries);
 			boolean canInvert = lRec.getIngredients().stream().
 					anyMatch(ing -> ing.test(torch));
 			if(lRec.getIngredients().stream().
@@ -61,16 +65,25 @@ public class LampRecipeMaker {
 						}
 					}
 					ItemStack newRes = res.copy();
-					LampBlockItem.setColor(newRes, LampColor.COLORLESS);
-					LampBlockItem.setInverted(newRes, invert);
+					YOpponents.LAMP_COLOR.set(newRes, LampColor.COLORLESS);
+					YOpponents.INVERTED.set(newRes, invert);
 					for(String s : lRec.getStripTags()) {
 						newRes.getNbt().remove(s);
 					}
 					String newPath = lRec.getId().getPath() + (invert ? "/invert" : lRec.isIgnoredInRecipeBook() ? "" : "/normal");
-					recs.add(new ShapedRecipe(
-							new Identifier(lRec.getId().getNamespace(), newPath), lRec.getGroup(),
-							lRec.getWidth(), lRec.getHeight(),
-							ings, newRes));
+					if(lRec instanceof ShapedRecipe shaped) {
+						recs.add(new ShapedRecipe(
+								new Identifier(lRec.getId().getNamespace(), newPath), lRec.getGroup(),
+								CraftingRecipeCategory.REDSTONE,
+								shaped.getWidth(), shaped.getHeight(),
+								ings, newRes));
+					}
+					else {
+						recs.add(new ShapelessRecipe(
+								new Identifier(lRec.getId().getNamespace(), newPath), lRec.getGroup(),
+								CraftingRecipeCategory.REDSTONE,
+								newRes, ings));
+					}
 				}
 			}
 			else {
@@ -80,7 +93,7 @@ public class LampRecipeMaker {
 								Arrays.stream(ing.getMatchingStacks()).
 								map(ItemStack::getItem).
 								allMatch(item -> item instanceof DyeItem ||
-										LampColor.BY_ITEM.containsKey(Resolvable.mapKey(item, Registry.ITEM))));
+										LampColor.BY_ITEM.containsKey(Resolvable.mapKey(item, Registries.ITEM))));
 				boolean isInvert = !noInvert && lRec.getIngredients().stream().
 						anyMatch(ing -> ing.test(torch));
 				BooleanList bList = noInvert ? BooleanList.of(false) : BooleanList.of(false, true);
@@ -100,16 +113,16 @@ public class LampRecipeMaker {
 												return aList.stream().flatMap(aInv -> LampColor.CANONICAL_ORDER.stream().
 														map(aColor -> {
 															ItemStack aStack = stack.copy();
-															LampBlockItem.setColor(aStack, aColor);
-															LampBlockItem.setInverted(aStack, aInv);
+															YOpponents.LAMP_COLOR.set(aStack, aColor);
+															YOpponents.INVERTED.set(aStack, aInv);
 															return aStack;
 														}));
 											}
 											else {
 												return aList.stream().map(aInv -> {
 													ItemStack aStack = stack.copy();
-													LampBlockItem.setColor(aStack, color);
-													LampBlockItem.setInverted(aStack, aInv);
+													YOpponents.LAMP_COLOR.set(aStack, color);
+													YOpponents.INVERTED.set(aStack, aInv);
 													return aStack;
 												});
 											}
@@ -121,7 +134,7 @@ public class LampRecipeMaker {
 											return Stream.of(stack.copy());
 										}
 										else {
-											LampColor byItemColor = LampColor.BY_ITEM.get(Resolvable.mapKey(item, Registry.ITEM));
+											LampColor byItemColor = LampColor.BY_ITEM.get(Resolvable.mapKey(item, Registries.ITEM));
 											if(byItemColor != null && byItemColor != color) {
 												return Stream.empty();
 											}
@@ -131,18 +144,27 @@ public class LampRecipeMaker {
 							ings.add(Ingredient.ofStacks(transformed));
 						}
 						ItemStack newRes = res.copy();
-						LampBlockItem.setColor(newRes, color);
+						YOpponents.LAMP_COLOR.set(newRes, color);
 						if(!noInvert) {
-							LampBlockItem.setInverted(newRes, invert ^ isInvert);
+							YOpponents.INVERTED.set(newRes, invert ^ isInvert);
 						}
 						for(String s : lRec.getStripTags()) {
 							newRes.getNbt().remove(s);
 						}
 						String newPath = lRec.getId().getPath() + '/' + color.asString() + (isInvert ^ invert ? "_invert" : "");
-						recs.add(new ShapedRecipe(
-								new Identifier(lRec.getId().getNamespace(), newPath), lRec.getGroup(),
-								lRec.getWidth(), lRec.getHeight(),
-								ings, newRes));
+						if(lRec instanceof ShapedRecipe shaped) {
+							recs.add(new ShapedRecipe(
+									new Identifier(lRec.getId().getNamespace(), newPath), lRec.getGroup(),
+									CraftingRecipeCategory.REDSTONE,
+									shaped.getWidth(), shaped.getHeight(),
+									ings, newRes));
+						}
+						else {
+							recs.add(new ShapelessRecipe(
+									new Identifier(lRec.getId().getNamespace(), newPath), lRec.getGroup(),
+									CraftingRecipeCategory.REDSTONE,
+									newRes, ings));
+						}
 					}
 				}
 			}

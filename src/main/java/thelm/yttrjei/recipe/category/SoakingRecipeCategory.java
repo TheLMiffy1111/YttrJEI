@@ -6,10 +6,9 @@ import com.unascribed.lib39.machination.recipe.SoakingRecipe;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -66,16 +65,16 @@ public class SoakingRecipeCategory extends AbstractRecipeCategory<SoakingRecipe>
 		for(int i = 0; i < inputCount && i < 6; ++i) {
 			addItem(builder, RecipeIngredientRole.INPUT, xi+i%3*18+1, y+i/3*18+1, inputs.get(i), JEIDrawables.SLOT);
 		}
-		addFluid(builder, fluidUsed ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST, xo+5, y+19, 32, 16, recipe.getCatalyst()).addTooltipCallback((slot, tooltip) -> {
+		addFluid(builder, fluidUsed ? RecipeIngredientRole.INPUT : RecipeIngredientRole.CATALYST, xo+5, y+19, 32, 16, recipe.getCatalyst()).addRichTooltipCallback((slot, tooltip) -> {
 			if(fluidUsed) {
 				tooltip.add(CONSUME_HINT);
 			}
 		});
-		addItem(builder, RecipeIngredientRole.OUTPUT, xo+49, y+1, recipe.getOutput(), JEIDrawables.OUTPUT_SLOT);
+		addItem(builder, RecipeIngredientRole.OUTPUT, xo+49, y+1, recipe.getOutput(registryAccess()), JEIDrawables.OUTPUT_SLOT);
 	}
 
 	@Override
-	public void draw(SoakingRecipe recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, SoakingRecipe recipe, IFocusGroup focuses) {
 		List<List<ItemStack>> inputs = recipe.getSoakingIngredients().
 				map(stack -> List.of(List.of(stack)),
 						ings -> ings.stream().
@@ -85,7 +84,7 @@ public class SoakingRecipeCategory extends AbstractRecipeCategory<SoakingRecipe>
 		int xo = 9 * (3 + Math.min(inputCount, 3));
 		int y = 4;
 		// we ignore inputs beyond 6 for now
-		CURVED_ARROW_DOWN.draw(poseStack, xo+4, y+2);
-		CURVED_ARROW.draw(poseStack, xo+24, y+2);
+		builder.addDrawable(CURVED_ARROW_DOWN, xo+4, y+2);
+		builder.addDrawable(CURVED_ARROW, xo+24, y+2);
 	}
 }

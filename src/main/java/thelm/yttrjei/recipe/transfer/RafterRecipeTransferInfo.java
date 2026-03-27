@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import com.unascribed.yttr.init.YHandledScreens;
-import com.unascribed.yttr.inventory.RafterScreenHandler;
-
+import diy.y2k.yttr.init.YHandledScreens;
+import diy.y2k.yttr.inventory.RafterScreenHandler;
 import it.unimi.dsi.fastutil.ints.IntList;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.recipe.RecipeType;

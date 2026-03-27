@@ -1,19 +1,21 @@
 package thelm.yttrjei.recipe.category;
 
-import java.util.List;
+import java.util.Set;
 
 import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
-import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.init.content.YItems;
 
+import diy.y2k.yttr.Yttr;
+import diy.y2k.yttr.init.content.YItems;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+import mezz.jei.api.gui.widgets.IRecipeWidget;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.ScreenPos;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -62,45 +64,66 @@ public class ForgottenCraftingRecipeCategory extends AbstractRecipeCategory<Forg
 	}
 
 	@Override
-	public void draw(ForgottenCraftingRecipe recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
-		Identifier id = recipe.id();
-		IDrawable recipeImage = new ResourceDrawable(new Identifier(id.getNamespace(), "textures/gui/ruined_recipe/" + id.getPath() + ".png"), 0, 0, 116, 54, 116, 54);
-		recipeImage.draw(poseStack, 0, 0);
-		OVERLAY.draw(poseStack, 0, 0);
-		BORDER.draw(poseStack, -14, -14);
-		for(int i = 0; i < 9; ++i) {
-			if(!recipe.emptySlots().contains(i)) {
-				int x = i%3*18+1;
-				int y = i/3*18+1;
-				if(mouseX >= x && mouseX < x+16 && mouseY >= y && mouseY < y+16) {
-					DrawableHelper.fill(poseStack, x, y, x+16, y+16, 0x80FFFFFF);
-				}
-			}
-		}
-		if(mouseX >= 95 && mouseX < 111 && mouseY >= 19 && mouseY < 35) {
-			DrawableHelper.fill(poseStack, 95, 19, 111, 35, 0x80FFFFFF);
-		}
-	}
-
-	@Override
-	public List<Text> getTooltipStrings(ForgottenCraftingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-		for(int i = 0; i < 9; ++i) {
-			if(!recipe.emptySlots().contains(i)) {
-				int x = i%3*18+1;
-				int y = i/3*18+1;
-				if(mouseX >= x && mouseX < x+16 && mouseY >= y && mouseY < y+16) {
-					return List.of(Text.translatable("container.enchant.clue").formatted(Formatting.ITALIC));
-				}
-			}
-		}
-		if(mouseX >= 95 && mouseX < 111 && mouseY >= 19 && mouseY < 35) {
-			return List.of(Text.translatable("container.enchant.clue", Text.translatable(recipe.result().getTranslationKey() + ".alt")).formatted(Formatting.ITALIC));
-		}
-		return List.of();
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, ForgottenCraftingRecipe recipe, IFocusGroup focuses) {
+		builder.addWidget(new RecipeWidget(recipe));
 	}
 
 	@Override
 	public Identifier getRegistryName(ForgottenCraftingRecipe recipe) {
 		return recipe.id();
+	}
+
+	public class RecipeWidget implements IRecipeWidget {
+
+		static final ScreenPos ZERO = new ScreenPos(0, 0);
+
+		private final ForgottenCraftingRecipe recipe;
+		private final IDrawable recipeImage;
+		private final Set<Integer> emptySlots;
+
+		public RecipeWidget(ForgottenCraftingRecipe recipe) {
+			this.recipe = recipe;
+			Identifier id = recipe.id();
+			recipeImage = new ResourceDrawable(new Identifier(id.getNamespace(), "textures/gui/ruined_recipe/" + id.getPath() + ".png"), 0, 0, 116, 54, 116, 54);
+			emptySlots = recipe.emptySlots();
+		}
+
+		@Override
+		public ScreenPos getPosition() {
+			return ZERO;
+		}
+
+		@Override
+		public void drawWidget(DrawContext guiGraphics, double mouseX, double mouseY) {
+			recipeImage.draw(guiGraphics, 0, 0);
+			OVERLAY.draw(guiGraphics, 0, 0);
+			BORDER.draw(guiGraphics, -14, -14);
+			for(int i = 0; i < 9; ++i) {
+				int x = i%3*18+1;
+				int y = i/3*18+1;
+				if(mouseX >= x && mouseX < x+16 && mouseY >= y && mouseY < y+16) {
+					guiGraphics.fill(x, y, x+16, y+16, 0x80FFFFFF);
+				}
+			}
+			if(mouseX >= 95 && mouseX < 111 && mouseY >= 19 && mouseY < 35) {
+				guiGraphics.fill(95, 19, 111, 35, 0x80FFFFFF);
+			}
+		}
+
+		@Override
+		public void getTooltip(ITooltipBuilder tooltip, double mouseX, double mouseY) {
+			for(int i = 0; i < 9; ++i) {
+				if(!recipe.emptySlots().contains(i)) {
+					int x = i%3*18+1;
+					int y = i/3*18+1;
+					if(mouseX >= x && mouseX < x+16 && mouseY >= y && mouseY < y+16) {
+						tooltip.add(Text.translatable("container.enchant.clue", "").formatted(Formatting.ITALIC));
+					}
+				}
+			}
+			if(mouseX >= 95 && mouseX < 111 && mouseY >= 19 && mouseY < 35) {
+				tooltip.add(Text.translatable("container.enchant.clue", Text.translatable(recipe.result().getTranslationKey() + ".alt")).formatted(Formatting.ITALIC));
+			}
+		}
 	}
 }

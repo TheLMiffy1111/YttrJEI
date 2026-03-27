@@ -8,6 +8,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.OverlayTexture;
@@ -15,11 +16,11 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 import thelm.yttrjei.YttrJEI;
 
 public class BlockIngredientRenderer implements IIngredientRenderer<ItemStack> {
@@ -29,7 +30,7 @@ public class BlockIngredientRenderer implements IIngredientRenderer<ItemStack> {
 	private IIngredientRenderer<ItemStack> delegate;
 
 	@Override
-	public void render(MatrixStack poseStack, ItemStack ingredient) {
+	public void render(DrawContext guiGraphics, ItemStack ingredient) {
 		if(YttrJEI.jeiRuntime == null) {
 			return;
 		}
@@ -40,13 +41,14 @@ public class BlockIngredientRenderer implements IIngredientRenderer<ItemStack> {
 			MinecraftClient minecraft = MinecraftClient.getInstance();
 			TextRenderer font = getFontRenderer(minecraft, ingredient);
 			ItemRenderer itemRenderer = minecraft.getItemRenderer();
-			BakedModel model = itemRenderer.getModel(ingredient, null, null, 0);
+			BakedModel model = itemRenderer.getModel(ingredient, minecraft.world, null, 0);
 
 			if(!model.hasDepth() || model.isBuiltin()) {
-				delegate.render(poseStack, ingredient);
+				delegate.render(guiGraphics, ingredient);
 				return;
 			}
 
+			MatrixStack poseStack = guiGraphics.getMatrices();
 			RenderSystem.enableDepthTest();
 			VertexConsumerProvider.Immediate bufferSource = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
 			int light = LightmapTextureManager.pack(15, 15);
@@ -55,18 +57,19 @@ public class BlockIngredientRenderer implements IIngredientRenderer<ItemStack> {
 			poseStack.push();
 			poseStack.translate(8, 8, 50);
 			poseStack.scale(16, -16, 16);
-			poseStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90));
+			poseStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-89.999F));
 			poseStack.push();
-			itemRenderer.renderItem(ingredient, ModelTransformation.Mode.NONE, false, poseStack, bufferSource, light, overlay, model);
+			itemRenderer.renderItem(ingredient, ModelTransformationMode.NONE, false, poseStack, bufferSource, light, overlay, model);
 			poseStack.pop();
 			bufferSource.draw();
 			poseStack.pop();
 
-			itemRenderer.renderGuiItemOverlay(font, ingredient, 0, 0);
+			guiGraphics.drawItemInSlot(font, ingredient, 0, 0);
 			RenderSystem.disableBlend();
 		}
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public List<Text> getTooltip(ItemStack ingredient, TooltipContext tooltipFlag) {
 		if(YttrJEI.jeiRuntime == null) {

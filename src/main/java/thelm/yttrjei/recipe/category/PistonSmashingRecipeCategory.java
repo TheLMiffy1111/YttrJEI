@@ -7,11 +7,10 @@ import com.unascribed.lib39.machination.recipe.PistonSmashingRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.block.Block;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -52,7 +51,7 @@ public class PistonSmashingRecipeCategory extends AbstractRecipeCategory<PistonS
 	public void setRecipe(IRecipeLayoutBuilder builder, PistonSmashingRecipe recipe, IFocusGroup focuses) {
 		List<Block> input = recipe.getInput().getMatchingBlocks();
 		List<Block> catalysts = recipe.getCatalyst().getMatchingBlocks();
-		ItemStack output = recipe.getOutput();
+		ItemStack output = recipe.getOutput(registryAccess());
 		ItemStack cloudOutput = recipe.getCloudOutput().copy();
 		cloudOutput.setCount(cloudOutput.getCount() * recipe.getCloudSize());
 		builder.addSlot(RecipeIngredientRole.INPUT, 32, 22).addItemStacks(input.stream().map(ItemStack::new).toList()).setCustomRenderer(VanillaTypes.ITEM_STACK, BlockIngredientRenderer.INSTANCE);
@@ -65,22 +64,22 @@ public class PistonSmashingRecipeCategory extends AbstractRecipeCategory<PistonS
 		}
 		if(!cloudOutput.isEmpty()) {
 			x += 12;
-			addItem(builder, RecipeIngredientRole.OUTPUT, x+1, 1, cloudOutput, JEIDrawables.SLOT).addTooltipCallback((slots, tooltip) -> tooltip.add(CLOUD_HINT));
+			addItem(builder, RecipeIngredientRole.OUTPUT, x+1, 1, cloudOutput, JEIDrawables.SLOT).addRichTooltipCallback((slots, tooltip) -> tooltip.add(CLOUD_HINT));
 		}
 	}
 
 	@Override
-	public void draw(PistonSmashingRecipe recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
-		ItemStack output = recipe.getOutput();
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, PistonSmashingRecipe recipe, IFocusGroup focuses) {
+		ItemStack output = recipe.getOutput(registryAccess());
 		ItemStack cloudOutput = recipe.getCloudOutput();
-		PISTON_SIDE.draw(poseStack, 0, 22);
-		CURVED_ARROW.draw(poseStack, 39, 3);
+		builder.addDrawable(PISTON_SIDE, 0, 22);
+		builder.addDrawable(CURVED_ARROW, 39, 3);
 		int x = 59;
 		if(!output.isEmpty()) {
 			x += 22;
 		}
 		if(!cloudOutput.isEmpty()) {
-			CLOUD.withColor(recipe.getCloudColor()).draw(poseStack, x, 6);
+			builder.addDrawable(CLOUD.withColor(recipe.getCloudColor()), x, 6);
 		}
 	}
 }

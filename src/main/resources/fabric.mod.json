@@ -24,7 +24,7 @@
 		"yttrjei.mixins.json"
 	],
 	"depends": {
-		"minecraft": ">=1.19- <1.19.3-",
+		"minecraft": ">=1.20- <1.20.2-",
 		"jei": "*",
 		"jeidrawables": "*",
 		"yttr": "*"
