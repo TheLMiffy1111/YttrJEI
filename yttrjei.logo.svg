@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="576" height="576" viewBox="0 0 96 96">
+	<defs>
+		<linearGradient id="g0" gradientUnits="userSpaceOnUse" x1="8" y1="27" x2="89" y2="67">
+			<stop offset="0" stop-color="#274343" />
+			<stop offset="1" stop-color="#1e2d2d" />
+		</linearGradient>
+		<linearGradient id="g1" gradientUnits="userSpaceOnUse" x1="4" y1="27" x2="97" y2="56">
+			<stop offset="0" stop-color="#6ba8a8" />
+			<stop offset="0.46" stop-color="#60a092" />
+			<stop offset="1" stop-color="#527979" />
+		</linearGradient>
+		<path id="p0" d="M11,29V33H21V59.17157288L18,62.17157288,13.82842712,58H11V60.82842712L17.17157288,67H18.82842712L25,60.82842712V33H39V63H35V67H85V63H75V33H85V29H11ZM43,33H71V63H43V50H57V46H43V33Z" />
+	</defs>
+	<use xlink:href="#p0" stroke="#030505" stroke-width="22" />
+	<use xlink:href="#p0" stroke="url(#g0)" stroke-width="4" />
+	<use xlink:href="#p0" fill="url(#g1)" />
+</svg>

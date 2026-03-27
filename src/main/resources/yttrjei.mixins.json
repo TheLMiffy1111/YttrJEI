@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "thelm.yttrjei.mixin",
+	"refmap": "yttrjei.refmap.json",
+	"target": "@env(DEFAULT)",
+	"compatibilityLevel": "JAVA_17",
+	"client": [
+		"ItemStackListFactoryMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

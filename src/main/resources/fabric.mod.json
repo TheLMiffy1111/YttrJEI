@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "yttrjei",
+	"version": "0@VERSION@",
+	"name": "YttrJEI",
+	"description": "An addon to Yttr that adds JEI support.",
+	"authors": [
+		"TheLMiffy1111"
+	],
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/yttrjei",
+		"sources": "https://github.com/TheLMiffy1111/YttrJEI",
+		"issues": "https://github.com/TheLMiffy1111/YttrJEI/issues"
+	},
+	"license": "MIT",
+	"icon": "yttrjei.logo.png",
+	"environment": "client",
+	"entrypoints": {
+		"jei_mod_plugin": [
+			"thelm.yttrjei.YttrJEI"
+		]
+	},
+	"mixins": [
+		"yttrjei.mixins.json"
+	],
+	"depends": {
+		"minecraft": ">=1.18.2- <1.19-",
+		"jei": "*",
+		"jeidrawables": "*",
+		"yttr": "*"
+	}
+}
