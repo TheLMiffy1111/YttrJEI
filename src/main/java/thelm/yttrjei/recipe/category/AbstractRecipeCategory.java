@@ -19,19 +19,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Text;
-import thelm.jeidrawables.gui.render.BlankDrawable;
 import thelm.yttrjei.YttrJEI;
 
 public abstract class AbstractRecipeCategory<R> implements IRecipeCategory<R> {
 
 	public final RecipeType<R> recipeType;
 	public final Text title;
-	public final IDrawable background;
 
 	public AbstractRecipeCategory(RecipeType<R> recipeType, Text title) {
 		this.recipeType = recipeType;
 		this.title = title;
-		background = new BlankDrawable(getWidth(), getHeight());
 	}
 
 	@Override
@@ -42,11 +39,6 @@ public abstract class AbstractRecipeCategory<R> implements IRecipeCategory<R> {
 	@Override
 	public RecipeType<R> getRecipeType() {
 		return recipeType;
-	}
-
-	@Override
-	public IDrawable getBackground() {
-		return background;
 	}
 
 	public abstract int getWidth();
