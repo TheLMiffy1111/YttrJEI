@@ -5,8 +5,13 @@
 	"refmap": "yttrjei.refmap.json",
 	"target": "@env(DEFAULT)",
 	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"SpecialBlockItemMixin",
+		"SpecialSubBlocksMixin",
+		"SpecialSubItemsMixin"
+	],
 	"client": [
-		"ItemStackListFactoryMixin"
+		"YttrClientInitMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

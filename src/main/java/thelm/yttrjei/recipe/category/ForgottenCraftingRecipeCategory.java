@@ -5,7 +5,7 @@ import java.util.List;
 import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.init.YItems;
+import com.unascribed.yttr.init.content.YItems;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -16,7 +16,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import thelm.jeidrawables.gui.render.BlendFunction;
@@ -31,7 +30,7 @@ import thelm.yttrjei.recipe.ForgottenCraftingRecipe;
  */
 public class ForgottenCraftingRecipeCategory extends AbstractRecipeCategory<ForgottenCraftingRecipe> {
 
-	public static final Text TITLE = new TranslatableText("emi.category.yttr.forgotten_crafting");
+	public static final Text TITLE = Text.translatable("emi.category.yttr.forgotten_crafting");
 
 	public static final BlendFunction MULTIPLY = new BlendFunction(SrcFactor.ZERO, DstFactor.SRC_COLOR, SrcFactor.ZERO, DstFactor.ONE);
 	public static final IDrawable ICON = new IngredientDrawable<>(new ItemStack(YItems.WASTELAND_DIRT));
@@ -90,12 +89,12 @@ public class ForgottenCraftingRecipeCategory extends AbstractRecipeCategory<Forg
 				int x = i%3*18+1;
 				int y = i/3*18+1;
 				if(mouseX >= x && mouseX < x+16 && mouseY >= y && mouseY < y+16) {
-					return List.of(new TranslatableText("container.enchant.clue").formatted(Formatting.ITALIC));
+					return List.of(Text.translatable("container.enchant.clue").formatted(Formatting.ITALIC));
 				}
 			}
 		}
 		if(mouseX >= 95 && mouseX < 111 && mouseY >= 19 && mouseY < 35) {
-			return List.of(new TranslatableText("container.enchant.clue", new TranslatableText(recipe.result().getTranslationKey() + ".alt")).formatted(Formatting.ITALIC));
+			return List.of(Text.translatable("container.enchant.clue", Text.translatable(recipe.result().getTranslationKey() + ".alt")).formatted(Formatting.ITALIC));
 		}
 		return List.of();
 	}

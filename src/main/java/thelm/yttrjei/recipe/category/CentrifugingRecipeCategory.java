@@ -10,7 +10,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import thelm.jeidrawables.gui.render.ResourceDrawable;
 import thelm.yttrjei.YttrJEI;
 
@@ -19,7 +18,7 @@ import thelm.yttrjei.YttrJEI;
  */
 public class CentrifugingRecipeCategory extends AbstractRecipeCategory<CentrifugingRecipe> {
 
-	public static final Text TITLE = new TranslatableText("emi.category.yttr.centrifuging");
+	public static final Text TITLE = Text.translatable("emi.category.yttr.centrifuging");
 
 	public static final ResourceDrawable CENTRIFUGE = new ResourceDrawable(Yttr.id("textures/gui/centrifuge.png"), 41, 8, 94, 95);
 

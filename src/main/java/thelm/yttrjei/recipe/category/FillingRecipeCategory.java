@@ -8,7 +8,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.init.YItems;
+import com.unascribed.yttr.init.content.YItems;
 import com.unascribed.yttr.mechanics.rifle.RifleMode;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -20,7 +20,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import thelm.jeidrawables.JEIDrawables;
 import thelm.jeidrawables.gui.render.ITextureDrawable;
@@ -33,7 +32,7 @@ import thelm.yttrjei.recipe.FillingRecipe;
  */
 public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe> {
 
-	public static final Text TITLE = new TranslatableText("emi.category.yttr.filling");
+	public static final Text TITLE = Text.translatable("emi.category.yttr.filling");
 
 	public static final Identifier BACKGROUND = Yttr.id("textures/gui/can_filler.png");
 	public static final ResourceDrawable PROGRESS_0 = new ResourceDrawable(BACKGROUND, 32, 39, 47, 18);
@@ -99,7 +98,7 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 	public List<Text> getTooltipStrings(FillingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		if(mouseX >= 48 && mouseX < 64 && mouseY >= 1 && mouseY < 17) {
 			RifleMode mode = recipe.mode();
-			return List.of(new TranslatableText("yttr.rifle_mode." + mode.name().toLowerCase(Locale.ROOT)).formatted(mode.chatColor));
+			return List.of(Text.translatable("yttr.rifle_mode." + mode.name().toLowerCase(Locale.ROOT)).formatted(mode.chatColor));
 		}
 		return List.of();
 	}

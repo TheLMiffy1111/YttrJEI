@@ -12,7 +12,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import thelm.jeidrawables.JEIDrawables;
 import thelm.yttrjei.YttrJEI;
 
@@ -23,7 +22,7 @@ public class VoidFilteringRecipeCategory extends AbstractRecipeCategory<VoidFilt
 
 	public static final NumberFormat CHANCE_FORMAT = new DecimalFormat("#.##");
 
-	public static final Text TITLE = new TranslatableText("emi.category.yttr.void_filtering");
+	public static final Text TITLE = Text.translatable("emi.category.yttr.void_filtering");
 
 	public VoidFilteringRecipeCategory() {
 		super(YttrJEI.VOID_FILTERING, TITLE);
@@ -47,7 +46,7 @@ public class VoidFilteringRecipeCategory extends AbstractRecipeCategory<VoidFilt
 	@Override
 	public void draw(VoidFilteringRecipe recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
 		TextRenderer font = font();
-		Text chanceComponent = new TranslatableText("emi.category.yttr.void_filtering.chance", CHANCE_FORMAT.format(recipe.getChance()));
+		Text chanceComponent = Text.translatable("emi.category.yttr.void_filtering.chance", CHANCE_FORMAT.format(recipe.getChance()));
 		font.draw(poseStack, chanceComponent, 30, 9, 0x404040);
 	}
 }

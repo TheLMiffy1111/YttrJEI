@@ -1,6 +1,6 @@
 package thelm.yttrjei.ingredient.subtype;
 
-import com.unascribed.yttr.init.YItems;
+import com.unascribed.yttr.init.content.YItems;
 
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;

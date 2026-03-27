@@ -2,7 +2,7 @@ package thelm.yttrjei.recipe.category;
 
 import java.util.List;
 
-import com.unascribed.yttr.crafting.ingredient.FluidIngredient;
+import com.unascribed.lib39.machination.ingredient.FluidIngredient;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -18,7 +18,6 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import thelm.jeidrawables.gui.render.BlankDrawable;
 import thelm.yttrjei.YttrJEI;
 
@@ -37,16 +36,6 @@ public abstract class AbstractRecipeCategory<R> implements IRecipeCategory<R> {
 	@Override
 	public Text getTitle() {
 		return title;
-	}
-
-	@Override
-	public Identifier getUid() {
-		return recipeType.getUid();
-	}
-
-	@Override
-	public Class<? extends R> getRecipeClass() {
-		return recipeType.getRecipeClass();
 	}
 
 	@Override

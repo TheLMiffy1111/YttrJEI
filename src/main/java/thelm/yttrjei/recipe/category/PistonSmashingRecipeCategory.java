@@ -2,8 +2,7 @@ package thelm.yttrjei.recipe.category;
 
 import java.util.List;
 
-import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.crafting.PistonSmashingRecipe;
+import com.unascribed.lib39.machination.recipe.PistonSmashingRecipe;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -15,7 +14,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import thelm.jeidrawables.JEIDrawables;
 import thelm.jeidrawables.gui.render.IColorableDrawable;
@@ -29,10 +27,10 @@ import thelm.yttrjei.gui.render.BlockIngredientRenderer;
  */
 public class PistonSmashingRecipeCategory extends AbstractRecipeCategory<PistonSmashingRecipe> {
 
-	public static final Text TITLE = new TranslatableText("emi.category.yttr.piston_smashing");
-	public static final Text CLOUD_HINT = new TranslatableText("emi.category.yttr.piston_smashing.cloud_output_hint");
+	public static final Text TITLE = Text.translatable("emi.category.lib39.piston_smashing");
+	public static final Text CLOUD_HINT = Text.translatable("emi.category.lib39.piston_smashing.cloud_output_hint");
 
-	public static final IDrawable CURVED_ARROW = new ResourceDrawable(Yttr.id("textures/gui/curved_arrow.png"), 0, 0, 16, 16, 16, 16);
+	public static final IDrawable CURVED_ARROW = new ResourceDrawable(new Identifier("lib39-machination:textures/gui/curved_arrow.png"), 0, 0, 16, 16, 16, 16);
 	public static final IDrawable PISTON_SIDE = new RotatedDrawable(new ResourceDrawable(new Identifier("textures/block/piston_side.png"), 0, 0, 16, 16, 16, 16), 90);
 	public static final IColorableDrawable CLOUD = new ResourceDrawable(new Identifier("textures/particle/effect_4.png"), 0, 0, 8, 8, 8, 8);
 

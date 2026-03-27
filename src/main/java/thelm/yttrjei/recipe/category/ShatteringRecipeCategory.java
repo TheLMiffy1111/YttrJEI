@@ -3,7 +3,7 @@ package thelm.yttrjei.recipe.category;
 import java.util.Map;
 
 import com.unascribed.yttr.Yttr;
-import com.unascribed.yttr.init.YEnchantments;
+import com.unascribed.yttr.init.content.YEnchantments;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -15,7 +15,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import thelm.jeidrawables.JEIDrawables;
 import thelm.jeidrawables.gui.render.IngredientDrawable;
@@ -28,7 +27,7 @@ import thelm.yttrjei.recipe.ShatteringRecipeWrapper;
  */
 public class ShatteringRecipeCategory extends AbstractRecipeCategory<ShatteringRecipeWrapper> {
 
-	public static final Text TITLE = new TranslatableText("emi.category.yttr.shattering");
+	public static final Text TITLE = Text.translatable("emi.category.yttr.shattering");
 
 	public static final IDrawable ICON = new IngredientDrawable<>(withShattering(new ItemStack(Items.DIAMOND_PICKAXE)));
 	public static final IDrawable SHATTERING = new ResourceDrawable(Yttr.id("textures/gui/shattering.png"), 0, 0, 24, 17, 24, 34);

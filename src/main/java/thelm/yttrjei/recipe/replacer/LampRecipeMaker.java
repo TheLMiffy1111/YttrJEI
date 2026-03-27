@@ -6,10 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableList;
 import com.unascribed.yttr.content.item.block.LampBlockItem;
 import com.unascribed.yttr.crafting.LampRecipe;
-import com.unascribed.yttr.init.YItems;
+import com.unascribed.yttr.init.content.YItems;
 import com.unascribed.yttr.mechanics.LampColor;
 import com.unascribed.yttr.util.Resolvable;
 
@@ -28,19 +27,6 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 
 public class LampRecipeMaker {
-
-	private static final List<LampColor> LAMP_COLORS;
-
-	static {
-		ImmutableList.Builder<LampColor> builder = ImmutableList.builderWithExpectedSize(LampColor.VALUES.size());
-		builder.add(LampColor.COLORLESS);
-		for(LampColor color : LampColor.VALUES) {
-			if(color != LampColor.COLORLESS) {
-				builder.add(color);
-			}
-		}
-		LAMP_COLORS = builder.build();
-	}
 
 	// I don't think this covers all cases but this works good enough
 	public static List<CraftingRecipe> createRecipes() {
@@ -99,7 +85,7 @@ public class LampRecipeMaker {
 						anyMatch(ing -> ing.test(torch));
 				BooleanList bList = noInvert ? BooleanList.of(false) : BooleanList.of(false, true);
 				for(boolean invert : bList) {
-					for(LampColor color : LAMP_COLORS) {
+					for(LampColor color : LampColor.CANONICAL_ORDER) {
 						if(color == LampColor.COLORLESS && isDye) {
 							continue;
 						}
@@ -111,7 +97,7 @@ public class LampRecipeMaker {
 										if(item instanceof LampBlockItem) {
 											BooleanList aList = noInvert ? BooleanList.of(false, true) : BooleanList.of(invert);
 											if(isDye) {
-												return aList.stream().flatMap(aInv -> LAMP_COLORS.stream().
+												return aList.stream().flatMap(aInv -> LampColor.CANONICAL_ORDER.stream().
 														map(aColor -> {
 															ItemStack aStack = stack.copy();
 															LampBlockItem.setColor(aStack, aColor);

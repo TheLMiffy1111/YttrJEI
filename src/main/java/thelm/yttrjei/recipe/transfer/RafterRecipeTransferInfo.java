@@ -1,8 +1,10 @@
 package thelm.yttrjei.recipe.transfer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
+import com.unascribed.yttr.init.YHandledScreens;
 import com.unascribed.yttr.inventory.RafterScreenHandler;
 
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -10,8 +12,8 @@ import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
 import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Identifier;
 
 public class RafterRecipeTransferInfo implements IRecipeTransferInfo<RafterScreenHandler, CraftingRecipe> {
 
@@ -27,13 +29,8 @@ public class RafterRecipeTransferInfo implements IRecipeTransferInfo<RafterScree
 	}
 
 	@Override
-	public Identifier getRecipeCategoryUid() {
-		return getRecipeType().getUid();
-	}
-
-	@Override
-	public Class<CraftingRecipe> getRecipeClass() {
-		return (Class<CraftingRecipe>)getRecipeType().getRecipeClass();
+	public Optional<ScreenHandlerType<RafterScreenHandler>> getMenuType() {
+		return Optional.of(YHandledScreens.RAFTING);
 	}
 
 	@Override
