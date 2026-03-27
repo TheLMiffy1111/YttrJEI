@@ -246,6 +246,7 @@ publishMods {
 		projectId = "1496726"
 		minecraftVersions.add(mcVersion)
 		requires "jei", "yttr"
+		incompatible "emi"
 	}
 
 	modrinth {
@@ -253,5 +254,6 @@ publishMods {
 		projectId = "YygSOzb7"
 		minecraftVersions.add(mcVersion)
 		requires "jei", "yttr"
+		incompatible "emi"
 	}
 }
