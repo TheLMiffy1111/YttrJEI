@@ -1,0 +1,46 @@
+modLoader = "lowcodefml"
+loaderVersion = "[47,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/TheLMiffy1111/YttrJEI/issues"
+
+[properties]
+	"connector:placeholder" = true
+
+[[mods]]
+	modId = "yttrjei"
+	version = "0@VERSION@"
+	displayName = "YttrJEI"
+	description = "An addon to Yttr that adds JEI support."
+	logoFile = "spectrumjei.logo.png"
+	authors = "TheLMiffy1111"
+	displayURL = "https://www.curseforge.com/minecraft/mc-mods/yttrjei"
+
+[[dependencies.yttrjei]]
+	modId = "minecraft"
+	versionRange = "[1.20,1.20.2)"
+	mandatory = true
+
+[[dependencies.yttrjei]]
+	modId = "connectormod"
+	versionRange = "*"
+	mandatory = true
+
+[[dependencies.yttrjei]]
+	modId = "connectorextras"
+	versionRange = "*"
+	mandatory = true
+
+[[dependencies.yttrjei]]
+	modId = "jei"
+	versionRange = "*"
+	mandatory = true
+
+[[dependencies.yttrjei]]
+	modId = "jeidrawables"
+	versionRange = "*"
+	mandatory = true
+
+[[dependencies.yttrjei]]
+	modId = "yttr"
+	versionRange = "*"
+	mandatory = true
