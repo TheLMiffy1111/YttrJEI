@@ -26,6 +26,7 @@ import com.unascribed.yttr.init.YBlocks;
 import com.unascribed.yttr.init.YEnchantments;
 import com.unascribed.yttr.init.YItems;
 import com.unascribed.yttr.init.YRecipeTypes;
+import com.unascribed.yttr.inventory.CanFillerScreenHandler;
 import com.unascribed.yttr.inventory.CentrifugeScreenHandler;
 import com.unascribed.yttr.inventory.ProjectTableScreenHandler;
 import com.unascribed.yttr.mechanics.rifle.RifleMode;
@@ -218,7 +219,7 @@ public class YttrJEI implements IModPlugin {
 
 		registration.addRecipeTransferHandler(CentrifugeScreenHandler.class, CENTRIFUGING, 0, 1, 6, 36);
 
-		//registration.addRecipeTransferHandler(CanFillerScreenHandler.class, FILLING, 0, 3, 5, 36);
+		registration.addRecipeTransferHandler(CanFillerScreenHandler.class, FILLING, 0, 3, 5, 36);
 
 		registration.addRecipeTransferHandler(ProjectTableScreenHandler.class, RecipeTypes.CRAFTING, 1, 9, 10, 54);
 		registration.addRecipeTransferHandler(new RafterRecipeTransferInfo());

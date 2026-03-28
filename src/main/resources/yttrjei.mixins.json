@@ -5,6 +5,9 @@
 	"refmap": "yttrjei.refmap.json",
 	"target": "@env(DEFAULT)",
 	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"CanFillerSlotMixin"
+	],
 	"client": [
 		"ItemStackListFactoryMixin"
 	],

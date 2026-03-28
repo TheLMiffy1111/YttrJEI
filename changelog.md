@@ -1,1 +1,2 @@
-Enable refmap for better compatibility  
+Allow can filler recipe transfer  
+Fix can filler category layout  
