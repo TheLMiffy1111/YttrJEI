@@ -1,1 +1,1 @@
-Initial release  
+Enable refmap for better compatibility  

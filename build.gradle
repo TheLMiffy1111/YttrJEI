@@ -101,7 +101,7 @@ def specVersion = "18.2"
 def vendor = "thelm"
 
 group = "thelm.yttrjei"
-version = "18.2.0"
+version = "18.2.1"
 
 def archivesName = modName
 base.archivesName = archivesName
@@ -124,6 +124,7 @@ tasks.withType(JavaCompile).configureEach {
 
 loom {
 	silentMojangMappingsLicense()
+	mixin.defaultRefmapName = "${modId}.refmap.json"
 	runs {
 		configureEach {
 			property "fabric.log.console.level", "debug"
@@ -140,7 +141,6 @@ dependencies {
 	minecraft "com.mojang:minecraft:1.18.2"
 	mappings loom.layered {
 		mappings "net.fabricmc:yarn:1.18.2+build.4:v2"
-		//mappings "org.quiltmc:quilt-mappings:1.18.2+build.26:intermediary-v2"
 		parchment "org.parchmentmc.data:parchment-1.18.2:2022.11.06@zip"
 	}
 	modImplementation "net.fabricmc:fabric-loader:0.18.1"
@@ -150,7 +150,7 @@ dependencies {
 
 	// JEI
 	modImplementation("mezz.jei:jei-1.18.2-fabric:10.2.1.1009") {transitive = false}
-	include(modImplementation("thelm.jeidrawables:JEIDrawables-Fabric:18.2.6"))
+	include(modImplementation("thelm.jeidrawables:JEIDrawables-Fabric:18.2.7"))
 
 	// Yttr
 	modImplementation "curse.maven:yttr-467267:4259913"
