@@ -1,1 +1,1 @@
-Enable refmap for better compatibility  
+Fix can filler category layout  

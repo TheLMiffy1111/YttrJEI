@@ -72,7 +72,7 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 			NbtCompound nbt = inputCan.getNbt();
 			int inputShots = nbt == null ? 0 : nbt.getInt("Shots");
 			addItem(builder, RecipeIngredientRole.INPUT, 48, 21, inputCan, JEIDrawables.SLOT);
-			addItem(builder, RecipeIngredientRole.OUTPUT, 83, 19, createAmmoCan(mode, inputShots+shots), JEIDrawables.OUTPUT_SLOT);
+			addItem(builder, RecipeIngredientRole.OUTPUT, 48, 67, createAmmoCan(mode, inputShots+shots), JEIDrawables.OUTPUT_SLOT);
 		}
 		else {
 			List<ItemStack> canInputs = List.of(createAmmoCan(mode, 0), createAmmoCan(mode, shots), createAmmoCan(mode, 1024 - shots));

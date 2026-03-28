@@ -112,7 +112,7 @@ def specVersion = "19.2"
 def vendor = "thelm"
 
 group = "thelm.yttrjei"
-version = "19.2.1"
+version = "19.2.2"
 
 def archivesName = modName
 base.archivesName = archivesName
