@@ -1,2 +1,1 @@
-Add connector mod metadata  
-Enable refmap for better compatibility  
+Fix connector mod metadata logo  

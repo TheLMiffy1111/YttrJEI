@@ -11,7 +11,7 @@ issueTrackerURL = "https://github.com/TheLMiffy1111/YttrJEI/issues"
 	version = "0@VERSION@"
 	displayName = "YttrJEI"
 	description = "An addon to Yttr that adds JEI support."
-	logoFile = "spectrumjei.logo.png"
+	logoFile = "yttrjei.logo.png"
 	authors = "TheLMiffy1111"
 	displayURL = "https://www.curseforge.com/minecraft/mc-mods/yttrjei"
 
