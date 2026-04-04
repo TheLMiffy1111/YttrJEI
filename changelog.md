@@ -1,1 +1,1 @@
-Fix connector mod metadata logo  
+Removed wrappers for shattering and filling recipes  

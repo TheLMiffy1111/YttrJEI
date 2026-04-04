@@ -3,6 +3,7 @@ package thelm.yttrjei.recipe.category;
 import java.util.Map;
 
 import diy.y2k.yttr.Yttr;
+import diy.y2k.yttr.content.recipe.ShatteringRecipe;
 import diy.y2k.yttr.init.content.YEnchantments;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -10,20 +11,22 @@ import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.StonecuttingRecipe;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import thelm.jeidrawables.JEIDrawables;
 import thelm.jeidrawables.gui.render.IngredientDrawable;
 import thelm.jeidrawables.gui.render.ResourceDrawable;
 import thelm.yttrjei.YttrJEI;
-import thelm.yttrjei.recipe.ShatteringRecipeWrapper;
 
 /**
  * Based on EmiShatteringRecipe
  */
-public class ShatteringRecipeCategory extends AbstractRecipeCategory<ShatteringRecipeWrapper> {
+public class ShatteringRecipeCategory extends AbstractRecipeCategory<Recipe<?>> {
 
 	public static final Text TITLE = Text.translatable("emi.category.yttr.shattering");
 
@@ -55,23 +58,24 @@ public class ShatteringRecipeCategory extends AbstractRecipeCategory<ShatteringR
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, ShatteringRecipeWrapper recipe, IFocusGroup focuses) {
-		addItem(builder, RecipeIngredientRole.INPUT, 1, 5, recipe.input(), JEIDrawables.SLOT);
-		addItem(builder, RecipeIngredientRole.OUTPUT, 63, 5, recipe.output(), JEIDrawables.OUTPUT_SLOT);
+	public void setRecipe(IRecipeLayoutBuilder builder, Recipe<?> recipe, IFocusGroup focuses) {
+		Ingredient input = recipe instanceof StonecuttingRecipe ?
+				Ingredient.ofStacks(recipe.getOutput(registryAccess())) :
+					recipe.getIngredients().get(0);
+		ItemStack output = recipe instanceof StonecuttingRecipe ?
+				new ItemStack(Item.byRawId(recipe.getIngredients().get(0).getMatchingItemIds().getInt(0))) :
+					recipe.getOutput(registryAccess());
+		addItem(builder, RecipeIngredientRole.INPUT, 1, 5, input, JEIDrawables.SLOT);
+		addItem(builder, RecipeIngredientRole.OUTPUT, 63, 5, output, JEIDrawables.OUTPUT_SLOT);
 	}
 
 	@Override
-	public void createRecipeExtras(IRecipeExtrasBuilder builder, ShatteringRecipeWrapper recipe, IFocusGroup focuses) {
-		if(recipe.exclusive()) {
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, Recipe<?> recipe, IFocusGroup focuses) {
+		if(recipe instanceof ShatteringRecipe) {
 			builder.addDrawable(SHATTERING, 26, 5);
 		}
 		else {
 			builder.addDrawable(JEIDrawables.RECIPE_ARROW, 27, 5);
 		}
-	}
-
-	@Override
-	public Identifier getRegistryName(ShatteringRecipeWrapper recipe) {
-		return recipe.id();
 	}
 }

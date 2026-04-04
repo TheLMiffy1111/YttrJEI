@@ -26,12 +26,11 @@ import thelm.jeidrawables.JEIDrawables;
 import thelm.jeidrawables.gui.render.ITextureDrawable;
 import thelm.jeidrawables.gui.render.ResourceDrawable;
 import thelm.yttrjei.YttrJEI;
-import thelm.yttrjei.recipe.FillingRecipe;
 
 /**
  * Based on EmiFillingRecipe
  */
-public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe> {
+public class FillingRecipeCategory extends AbstractRecipeCategory<RifleMode> {
 
 	public static final Text TITLE = Text.translatable("emi.category.yttr.filling");
 
@@ -59,11 +58,10 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, FillingRecipe recipe, IFocusGroup focuses) {
-		RifleMode mode = recipe.mode();
-		addItem(builder, RecipeIngredientRole.INPUT, 1, 1, new ItemStack(mode.item.get()), JEIDrawables.SLOT);
+	public void setRecipe(IRecipeLayoutBuilder builder, RifleMode recipe, IFocusGroup focuses) {
+		addItem(builder, RecipeIngredientRole.INPUT, 1, 1, new ItemStack(recipe.item.get()), JEIDrawables.SLOT);
 		addItem(builder, RecipeIngredientRole.INPUT, 19, 1, new ItemStack(YItems.GLOWING_GAS), JEIDrawables.SLOT);
-		int shots = mode.shotsPerItemInCanFiller();
+		int shots = recipe.shotsPerItemInCanFiller();
 		Optional<ItemStack> inputCanFocus = focuses.getItemStackFocuses(RecipeIngredientRole.INPUT).
 				map(f -> f.getTypedValue().getIngredient()).
 				filter(s -> s.getItem() == YItems.EMPTY_AMMO_CAN || s.getItem() == YItems.AMMO_CAN).
@@ -72,11 +70,11 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 			ItemStack inputCan = inputCanFocus.get();
 			int inputShots = YOpponents.SHOTS.get(inputCan);
 			addItem(builder, RecipeIngredientRole.INPUT, 37, 19, inputCan, JEIDrawables.SLOT);
-			addItem(builder, RecipeIngredientRole.OUTPUT, 83, 19, createAmmoCan(mode, inputShots+shots), JEIDrawables.OUTPUT_SLOT);
+			addItem(builder, RecipeIngredientRole.OUTPUT, 83, 19, createAmmoCan(recipe, inputShots+shots), JEIDrawables.OUTPUT_SLOT);
 		}
 		else {
-			List<ItemStack> canInputs = List.of(createAmmoCan(mode, 0), createAmmoCan(mode, shots), createAmmoCan(mode, 1024 - shots));
-			List<ItemStack> canOutputs = List.of(createAmmoCan(mode, shots), createAmmoCan(mode, shots * 2), createAmmoCan(mode, 1024));
+			List<ItemStack> canInputs = List.of(createAmmoCan(recipe, 0), createAmmoCan(recipe, shots), createAmmoCan(recipe, 1024 - shots));
+			List<ItemStack> canOutputs = List.of(createAmmoCan(recipe, shots), createAmmoCan(recipe, shots * 2), createAmmoCan(recipe, 1024));
 			builder.createFocusLink(
 					addItem(builder, RecipeIngredientRole.INPUT, 37, 19, canInputs, JEIDrawables.SLOT),
 					addItem(builder, RecipeIngredientRole.OUTPUT, 83, 19, canOutputs, JEIDrawables.OUTPUT_SLOT));
@@ -84,34 +82,32 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 	}
 
 	@Override
-	public void createRecipeExtras(IRecipeExtrasBuilder builder, FillingRecipe recipe, IFocusGroup focuses) {
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, RifleMode recipe, IFocusGroup focuses) {
 		builder.addDrawable(PROGRESS_0, 0, 18);
 		builder.addDrawable(PROGRESS_2, 54, 18);
-		builder.addDrawable(ICONS.get(recipe.mode()), 1, 23);
+		builder.addDrawable(ICONS.get(recipe), 1, 23);
 	}
 
 	@Override
-	public void draw(FillingRecipe recipe, IRecipeSlotsView recipeSlotsView, DrawContext guiGraphics, double mouseX, double mouseY) {
+	public void draw(RifleMode recipe, IRecipeSlotsView recipeSlotsView, DrawContext guiGraphics, double mouseX, double mouseY) {
 		PROGRESS_1.draw(guiGraphics, 36, 0);
 		TextRenderer font = font();
-		RifleMode mode = recipe.mode();
-		guiGraphics.drawText(font, "+" + mode.shotsPerItemInCanFiller(), 52, 8, 0x555555, false);
+		guiGraphics.drawText(font, "+" + recipe.shotsPerItemInCanFiller(), 52, 8, 0x555555, false);
 	}
 
 	@Override
-	public void getTooltip(ITooltipBuilder tooltip, FillingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+	public void getTooltip(ITooltipBuilder tooltip, RifleMode recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		if(mouseX >= 1 && mouseX < 17 && mouseY >= 23 && mouseY < 39) {
-			RifleMode mode = recipe.mode();
-			tooltip.add(Text.translatable("yttr.rifle_mode." + mode.name().toLowerCase(Locale.ROOT)).formatted(mode.chatColor));
+			tooltip.add(Text.translatable("yttr.rifle_mode." + recipe.name().toLowerCase(Locale.ROOT)).formatted(recipe.chatColor));
 		}
 	}
 
 	@Override
-	public Identifier getRegistryName(FillingRecipe recipe) {
-		return Yttr.id(recipe.mode().name().toLowerCase(Locale.ROOT));
+	public Identifier getRegistryName(RifleMode recipe) {
+		return Yttr.id(recipe.name().toLowerCase(Locale.ROOT));
 	}
 
-	public ItemStack createAmmoCan(RifleMode mode, int qty) {
+	public ItemStack createAmmoCan(RifleMode recipe, int qty) {
 		if(qty <= 0) {
 			return new ItemStack(YItems.EMPTY_AMMO_CAN);
 		}
@@ -120,7 +116,7 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 				qty = 1024;
 			}
 			ItemStack is = new ItemStack(YItems.AMMO_CAN);
-			YOpponents.MODE.set(is, mode);
+			YOpponents.MODE.set(is, recipe);
 			YOpponents.SHOTS.set(is, qty);
 			return is;
 		}
