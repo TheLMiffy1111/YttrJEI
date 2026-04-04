@@ -26,12 +26,11 @@ import thelm.jeidrawables.JEIDrawables;
 import thelm.jeidrawables.gui.render.ITextureDrawable;
 import thelm.jeidrawables.gui.render.ResourceDrawable;
 import thelm.yttrjei.YttrJEI;
-import thelm.yttrjei.recipe.FillingRecipe;
 
 /**
  * Based on EmiFillingRecipe
  */
-public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe> {
+public class FillingRecipeCategory extends AbstractRecipeCategory<RifleMode> {
 
 	public static final Text TITLE = new TranslatableText("emi.category.yttr.filling");
 
@@ -59,11 +58,10 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, FillingRecipe recipe, IFocusGroup focuses) {
-		RifleMode mode = recipe.mode();
-		addItem(builder, RecipeIngredientRole.INPUT, 1, 1, new ItemStack(mode.item.get()), JEIDrawables.SLOT);
+	public void setRecipe(IRecipeLayoutBuilder builder, RifleMode recipe, IFocusGroup focuses) {
+		addItem(builder, RecipeIngredientRole.INPUT, 1, 1, new ItemStack(recipe.item.get()), JEIDrawables.SLOT);
 		addItem(builder, RecipeIngredientRole.INPUT, 95, 1, new ItemStack(YItems.GLOWING_GAS), JEIDrawables.SLOT);
-		int shots = mode.shotsPerItem;
+		int shots = recipe.shotsPerItem;
 		Optional<ItemStack> inputCanFocus = focuses.getItemStackFocuses(RecipeIngredientRole.INPUT).
 				map(f -> f.getTypedValue().getIngredient()).
 				filter(s -> s.getItem() == YItems.EMPTY_AMMO_CAN || s.getItem() == YItems.AMMO_CAN).
@@ -73,11 +71,11 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 			NbtCompound nbt = inputCan.getNbt();
 			int inputShots = nbt == null ? 0 : nbt.getInt("Shots");
 			addItem(builder, RecipeIngredientRole.INPUT, 48, 21, inputCan, JEIDrawables.SLOT);
-			addItem(builder, RecipeIngredientRole.OUTPUT, 48, 67, createAmmoCan(mode, inputShots+shots), JEIDrawables.OUTPUT_SLOT);
+			addItem(builder, RecipeIngredientRole.OUTPUT, 48, 67, createAmmoCan(recipe, inputShots+shots), JEIDrawables.OUTPUT_SLOT);
 		}
 		else {
-			List<ItemStack> canInputs = List.of(createAmmoCan(mode, 0), createAmmoCan(mode, shots), createAmmoCan(mode, 1024 - shots));
-			List<ItemStack> canOutputs = List.of(createAmmoCan(mode, shots), createAmmoCan(mode, shots * 2), createAmmoCan(mode, 1024));
+			List<ItemStack> canInputs = List.of(createAmmoCan(recipe, 0), createAmmoCan(recipe, shots), createAmmoCan(recipe, 1024 - shots));
+			List<ItemStack> canOutputs = List.of(createAmmoCan(recipe, shots), createAmmoCan(recipe, shots * 2), createAmmoCan(recipe, 1024));
 			builder.createFocusLink(
 					addItem(builder, RecipeIngredientRole.INPUT, 48, 21, canInputs, JEIDrawables.SLOT),
 					addItem(builder, RecipeIngredientRole.OUTPUT, 48, 67, canOutputs, JEIDrawables.OUTPUT_SLOT));
@@ -85,31 +83,29 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 	}
 
 	@Override
-	public void draw(FillingRecipe recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
+	public void draw(RifleMode recipe, IRecipeSlotsView recipeSlotsView, MatrixStack poseStack, double mouseX, double mouseY) {
 		PROGRESS_0.draw(poseStack, 0, 20);
 		PROGRESS_1.draw(poseStack, 65, 20);
 		PROGRESS_2.draw(poseStack, 47, 38);
-		ICONS.get(recipe.mode()).draw(poseStack, 48, 1);
+		ICONS.get(recipe).draw(poseStack, 48, 1);
 		TextRenderer font = font();
-		RifleMode mode = recipe.mode();
-		font.draw(poseStack, "+" + mode.shotsPerItem, 68, 5, 0x555555);
+		font.draw(poseStack, "+" + recipe.shotsPerItem, 68, 5, 0x555555);
 	}
 
 	@Override
-	public List<Text> getTooltipStrings(FillingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+	public List<Text> getTooltipStrings(RifleMode recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		if(mouseX >= 48 && mouseX < 64 && mouseY >= 1 && mouseY < 17) {
-			RifleMode mode = recipe.mode();
-			return List.of(new TranslatableText("yttr.rifle_mode." + mode.name().toLowerCase(Locale.ROOT)).formatted(mode.chatColor));
+			return List.of(new TranslatableText("yttr.rifle_mode." + recipe.name().toLowerCase(Locale.ROOT)).formatted(recipe.chatColor));
 		}
 		return List.of();
 	}
 
 	@Override
-	public Identifier getRegistryName(FillingRecipe recipe) {
-		return Yttr.id(recipe.mode().name().toLowerCase(Locale.ROOT));
+	public Identifier getRegistryName(RifleMode recipe) {
+		return Yttr.id(recipe.name().toLowerCase(Locale.ROOT));
 	}
 
-	public ItemStack createAmmoCan(RifleMode mode, int qty) {
+	public ItemStack createAmmoCan(RifleMode recipe, int qty) {
 		if(qty <= 0) {
 			return new ItemStack(YItems.EMPTY_AMMO_CAN);
 		}
@@ -119,7 +115,7 @@ public class FillingRecipeCategory extends AbstractRecipeCategory<FillingRecipe>
 			}
 			ItemStack is = new ItemStack(YItems.AMMO_CAN);
 			NbtCompound n = new NbtCompound();
-			n.putString("Mode", mode.name());
+			n.putString("Mode", recipe.name());
 			n.putInt("Shots", qty);
 			is.setNbt(n);
 			return is;
