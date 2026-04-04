@@ -1,1 +1,1 @@
-Fix can filler category layout  
+Removed wrappers for shattering and filling recipes  

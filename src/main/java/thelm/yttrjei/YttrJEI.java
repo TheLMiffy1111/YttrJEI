@@ -57,6 +57,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -71,9 +73,7 @@ import thelm.yttrjei.ingredient.subtype.LampItemSubtypeInterpreter;
 import thelm.yttrjei.ingredient.subtype.PotionItemSubtypeInterpreter;
 import thelm.yttrjei.ingredient.subtype.SnareItemSubtypeInterpreter;
 import thelm.yttrjei.recipe.ContinuityGiftRecipe;
-import thelm.yttrjei.recipe.FillingRecipe;
 import thelm.yttrjei.recipe.ForgottenCraftingRecipe;
-import thelm.yttrjei.recipe.ShatteringRecipeWrapper;
 import thelm.yttrjei.recipe.category.CentrifugingRecipeCategory;
 import thelm.yttrjei.recipe.category.ContinuityGiftRecipeCategory;
 import thelm.yttrjei.recipe.category.FillingRecipeCategory;
@@ -93,16 +93,19 @@ public class YttrJEI implements IModPlugin {
 	public static IJeiHelpers jeiHelpers;
 	public static IJeiRuntime jeiRuntime;
 
-	public static final RecipeType<PistonSmashingRecipe> PISTON_SMASHING = createRecipeType(new Identifier("lib39:piston_smashing"), PistonSmashingRecipe.class);
-	public static final RecipeType<SoakingRecipe> SOAKING = createRecipeType(new Identifier("lib39:soaking"), SoakingRecipe.class);
+	public static final RecipeType<PistonSmashingRecipe> PISTON_SMASHING = new RecipeType<>(new Identifier("lib39:piston_smashing"), PistonSmashingRecipe.class);
+	public static final RecipeType<SoakingRecipe> SOAKING = new RecipeType<>(new Identifier("lib39:soaking"), SoakingRecipe.class);
 
-	public static final RecipeType<CentrifugingRecipe> CENTRIFUGING = createRecipeType(Yttr.id("centrifuging"), CentrifugingRecipe.class);
-	public static final RecipeType<VoidFilteringRecipe> VOID_FILTERING = createRecipeType(Yttr.id("void_filtering"), VoidFilteringRecipe.class);
-	public static final RecipeType<ShatteringRecipeWrapper> SHATTERING = createRecipeType(Yttr.id("shattering"), ShatteringRecipeWrapper.class);
+	public static final RecipeType<CentrifugingRecipe> CENTRIFUGING = new RecipeType<>(Yttr.id("centrifuging"), CentrifugingRecipe.class);
+	public static final RecipeType<VoidFilteringRecipe> VOID_FILTERING = new RecipeType<>(Yttr.id("void_filtering"), VoidFilteringRecipe.class);
+	@SuppressWarnings("rawtypes")
+	public static final RecipeType<Recipe<?>> SHATTERING = new RecipeType(Yttr.id("shattering"), Recipe.class);
 
-	public static final RecipeType<FillingRecipe> FILLING = createRecipeType(Yttr.id("filling"), FillingRecipe.class);
-	public static final RecipeType<ContinuityGiftRecipe> CONTINUITY_GIFTS = createRecipeType(Yttr.id("continuity_gifts"), ContinuityGiftRecipe.class);
-	public static final RecipeType<ForgottenCraftingRecipe> FORGOTTEN_CRAFTING = createRecipeType(Yttr.id("forgotten_crafting"), ForgottenCraftingRecipe.class);
+	public static final RecipeType<RifleMode> FILLING = new RecipeType<>(Yttr.id("filling"), RifleMode.class);
+	public static final RecipeType<ContinuityGiftRecipe> CONTINUITY_GIFTS = new RecipeType<>(Yttr.id("continuity_gifts"), ContinuityGiftRecipe.class);
+	public static final RecipeType<ForgottenCraftingRecipe> FORGOTTEN_CRAFTING = new RecipeType<>(Yttr.id("forgotten_crafting"), ForgottenCraftingRecipe.class);
+
+	public static final RecipeType<CraftingRecipe> RAFTING = new RecipeType<>(Yttr.id("rafting"), CraftingRecipe.class);
 
 	@Override
 	public Identifier getPluginUid() {
@@ -184,18 +187,15 @@ public class YttrJEI implements IModPlugin {
 				sorted(Comparator.comparingDouble(VoidFilteringRecipe::getChance).reversed()).
 				toList();
 		registration.addRecipes(VOID_FILTERING, voidFilteringRecipes);
-		List<ShatteringRecipeWrapper> shatteringRecipes = Streams.concat(
-				recipeManager.listAllOfType(YRecipeTypes.SHATTERING).
-				stream().
-				map(ShatteringRecipeWrapper::new),
+		List<Recipe<?>> shatteringRecipes = Streams.concat(
+				recipeManager.listAllOfType(YRecipeTypes.SHATTERING).stream(),
 				recipeManager.listAllOfType(net.minecraft.recipe.RecipeType.STONECUTTING).
 				stream().
 				filter(r -> {
 					return r.getOutput().getCount() == 1 &&
 							r.getOutput().getItem() instanceof BlockItem &&
 							!r.getIngredients().isEmpty();
-				}).
-				map(ShatteringRecipeWrapper::new),
+				}),
 				recipeManager.listAllOfType(net.minecraft.recipe.RecipeType.CRAFTING).
 				stream().
 				filter(r -> {
@@ -203,12 +203,11 @@ public class YttrJEI implements IModPlugin {
 							!r.getIngredients().isEmpty() &&
 							Arrays.stream(r.getIngredients().get(0).getMatchingStacks()).
 							anyMatch(s -> s.getItem() instanceof BlockItem);	
-				}).
-				map(ShatteringRecipeWrapper::new)).
+				})).
 				toList();
 		registration.addRecipes(SHATTERING, shatteringRecipes);
 
-		registration.addRecipes(FILLING, RifleMode.VALUES.stream().map(FillingRecipe::new).toList());
+		registration.addRecipes(FILLING, RifleMode.VALUES);
 		double giftChance = 100D / DropOfContinuityItem.getPossibilities(true, null).size();
 		List<ContinuityGiftRecipe> giftRecipes = DropOfContinuityItem.getPossibilities(true, null).
 				stream().
@@ -308,11 +307,6 @@ public class YttrJEI implements IModPlugin {
 				stream().
 				filter(LampRecipe.class::isInstance).
 				toList());
-	}
-
-	public static <R> RecipeType<R> createRecipeType(Identifier uid, Class<? extends R> recipeClass) {
-		RecipeType<R> recipeType = new RecipeType<>(uid, recipeClass);
-		return recipeType;
 	}
 
 	public Text[] buildInfo(String key) {
