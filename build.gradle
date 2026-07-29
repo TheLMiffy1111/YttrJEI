@@ -4,7 +4,7 @@ plugins {
 	id "idea"
 	id "maven-publish"
 	id "com.crystaelix.blossom" version "1.3.2"
-	id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+	id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 	id "de.undercouch.download" version "5.7.0"
 }
 
@@ -169,7 +169,7 @@ loom {
 
 dependencies {
 	// Download and unpack Yttr
-	def yttrVersion = "9.20.1031"
+	def yttrVersion = "9.20.1058"
 	unpackYttr(yttrVersion)
 
 	// Minecraft
@@ -178,13 +178,13 @@ dependencies {
 		mappings "net.fabricmc:yarn:1.20.1+build.10:v2"
 		parchment "org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip"
 	}
-	modImplementation "net.fabricmc:fabric-loader:0.18.1"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:0.92.7+1.20.1"
+	modImplementation "net.fabricmc:fabric-loader:0.19.3"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:0.92.9+1.20.1"
 	modImplementation "eu.pb4:placeholder-api:2.1.4+1.20.1"
 	modImplementation "com.terraformersmc:modmenu:7.2.2"
 
 	// JEI
-	modImplementation("mezz.jei:jei-1.20.1-fabric:15.20.0.129") {transitive = false}
+	modImplementation("mezz.jei:jei-1.20.1-fabric:15.20.0.133") {transitive = false}
 	include(modImplementation("thelm.jeidrawables:JEIDrawables-Fabric:20.1.7"))
 
 	// Yttr Dependencies
@@ -271,6 +271,7 @@ publishMods {
 		accessToken = providers.gradleProperty("curseforge.token")
 		projectId = "1496726"
 		minecraftVersions.add(mcVersion)
+		client = true
 		requires "jei", "yttr"
 		incompatible "emi"
 	}
